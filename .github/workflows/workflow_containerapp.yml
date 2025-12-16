@@ -53,3 +53,5 @@ jobs:
         containerAppEnvironment: env-mhuser03
         containerAppName: app-mhuser03
         targetPort: 8080
+      environmentVariables: |
+          API_URL=https://app-mhuser03-ai.calmpebble-057ac082.westeurope.azurecontainerapps.io
