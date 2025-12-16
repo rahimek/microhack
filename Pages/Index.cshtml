@@ -1,0 +1,59 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    var apiUrl = Environment.GetEnvironmentVariable("API_URL");
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <p>This line here is the message you are looking for!</p>
+
+    <br><br>
+    <br><br>
+    <br><br>
+
+    <div>
+        <input type="text" id="userInput" placeholder="Enter your prompt here" class="form-control" style="height: 100px;" />
+        <button onclick="sendPrompt()" class="btn btn-primary mt-2">Send Prompt</button>
+        <textarea id="output" class="form-control mt-2" rows="4" style="height: 100px;" readonly></textarea>
+        <input type="text" id="apiUrlField" class="form-control mt-2" readonly placeholder="API URL will be displayed here" />
+    </div>
+</div>
+
+<script>
+    async function sendPrompt() {
+        const userInput = document.getElementById("userInput").value;
+        const outputField = document.getElementById("output");
+        const apiUrlField = document.getElementById("apiUrlField");
+
+        if (!userInput) {
+            outputField.value = "Please enter a prompt";
+            return;
+        }
+
+        var apiEndpoint = "@apiUrl" + "/api/generate";
+        apiUrlField.value = "API URL: " + "@apiUrl"; // Display API URL
+
+        try {
+            const response = await fetch(apiEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "llama3.2",  // Ensure the correct model is used
+                    prompt: userInput,
+                    stream: false  // Disable streaming to get a full response
+                })
+            });
+
+            const data = await response.json();
+            outputField.value = data.response ? data.response : "No response from API";
+        } catch (error) {
+            outputField.value = "Error: " + error.message;
+        }
+    }
+</script>
